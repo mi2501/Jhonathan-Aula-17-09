@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cadastro e Gerenciamento</title>
+  <style>
+    /* O estilo permanece o mesmo */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    nav {
+      background-color: #007bff;
+      padding: 15px 30px;
+      color: white;
+      display: flex;
+      justify-content: space-between; /* Ajusta espaço entre esquerda e direita */
+      align-items: center;
+    }
+
+    .nav-left {
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .nav-right {
+      display: flex;
+      gap: 20px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 16px;
+      transition: opacity 0.3s ease;
+      cursor: pointer;
+    }
+
+    nav a:hover {
+      opacity: 0.8;
+    }
+
+    .container {
+      max-width: 400px;
+      padding: 20px;
+      border-radius: 6px;
+      position: fixed;
+      left: 20px;
+      top: 30%;
+      transform: translateY(-50%);
+      margin: 0;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: #555;
+      font-weight: 600;
+      text-align: left;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 15px;
+      transition: border-color 0.3s ease;
+      text-align: left;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    select:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #007bff;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .success-message {
+      margin-top: 15px;
+      padding: 10px;
+      border: 1px solid #28a745;
+      background-color: #d4edda;
+      color: #155724;
+      border-radius: 4px;
+      text-align: center;
+      display: none;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    ul li {
+      padding: 8px 12px;
+      background: #f8f9fa;
+      border: 1px solid #ddd;
+      margin-bottom: 8px;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    ul li button {
+      background-color: #dc3545;
+      border: none;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    ul li button:hover {
+      background-color: #a71d2a;
+    }
+
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-left">Gerenciamento de tarefas</div>
+    <div class="nav-right">
+      <a href="#" id="navUsuario">Cadastro de Usuário</a>
+      <a href="#" id="navTarefa">Cadastro de Tarefas</a>
+      <a href="#" id="navGerenciar">Gerenciar Tarefas</a>
+    </div>
+  </nav>
+
+  <div class="container" id="mainContainer">
+    <!-- Conteúdo dinâmico -->
+  </div>
+
+  <script>
+    const container = document.getElementById('mainContainer');
+
+    const usuarios = [];
+    const tarefas = [];
+
+    function showCadastroUsuario() {
+      container.innerHTML = `
+        <form id="userForm">
+          <h2>Cadastro de Usuário</h2>
+          <label for="nome">Nome:</label>
+          <input type="text" id="nome" name="nome" required />
+
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" required />
+
+          <button type="submit">Cadastrar</button>
+          <div class="success-message" id="successUser" style="display:none;">Usuário cadastrado com sucesso!</div>
+        </form>
+      `;
+
+      const userForm = document.getElementById('userForm');
+      const successUser = document.getElementById('successUser');
+
+      userForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const nome = userForm.nome.value.trim();
+        const email = userForm.email.value.trim();
+
+        if(nome && email) {
+          usuarios.push({ nome, email });
+          successUser.style.display = 'block';
+          userForm.reset();
+          setTimeout(() => successUser.style.display = 'none', 3000);
+          console.log('Usuários cadastrados:', usuarios);
+        }
+      });
+    }
+
+    function showCadastroTarefa() {
+      container.innerHTML = `
+        <form id="taskForm">
+          <h2>Cadastro de Tarefas</h2>
+          <label for="tarefa">Descrição da Tarefa:</label>
+          <input type="text" id="tarefa" name="tarefa" required />
+
+          <label for="setor">Setor:</label>
+          <select id="setor" name="setor" required>
+            <option value="">Selecione o setor</option>
+            <option value="Desenvolvimento">Desenvolvimento</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Vendas">Vendas</option>
+          </select>
+
+          <label for="usuario">Usuário:</label>
+          <select id="usuario" name="usuario" required>
+            <option value="">Selecione o usuário</option>
+            ${usuarios.map(user => `<option value="${user.nome}">${user.nome}</option>`).join('')}
+          </select>
+
+          <label for="prioridade">Prioridade:</label>
+          <select id="prioridade" name="prioridade" required>
+            <option value="">Selecione a prioridade</option>
+            <option value="Baixa">Baixa</option>
+            <option value="Média">Média</option>
+            <option value="Alta">Alta</option>
+          </select>
+
+          <button type="submit">Cadastrar</button>
+          <div class="success-message" id="successTask" style="display:none;">Tarefa cadastrada com sucesso!</div>
+        </form>
+      `;
+
+      const taskForm = document.getElementById('taskForm');
+      const successTask = document.getElementById('successTask');
+
+      taskForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const descricao = taskForm.tarefa.value.trim();
+        const setor = taskForm.setor.value;
+        const usuario = taskForm.usuario.value;
+        const prioridade = taskForm.prioridade.value;
+
+        if(descricao && setor && usuario && prioridade) {
+          tarefas.push({ descricao, setor, usuario, prioridade, done: false });
+          successTask.style.display = 'block';
+          taskForm.reset();
+          setTimeout(() => successTask.style.display = 'none', 3000);
+          console.log('Tarefas cadastradas:', tarefas);
+        }
+      });
+    }
+
+    function showGerenciarTarefas() {
+      let tarefasHtml = tarefas.length === 0 ? '<p>Nenhuma tarefa cadastrada.</p>' : '<ul>' +
+        tarefas.map((tarefa, idx) => `
+          <li>
+            ${tarefa.descricao} - ${tarefa.setor} - ${tarefa.usuario} - Prioridade: ${tarefa.prioridade}
+            <button data-idx="${idx}">Excluir</button>
+          </li>
+        `).join('') + '</ul>';
+
+      container.innerHTML = `
+        <h2>Gerenciar Tarefas</h2>
+        ${tarefasHtml}
+      `;
+
+      const botoesExcluir = container.querySelectorAll('button[data-idx]');
+      botoesExcluir.forEach(botao => {
+        botao.addEventListener('click', () => {
+          const idx = parseInt(botao.getAttribute('data-idx'), 10);
+          tarefas.splice(idx, 1);
+          showGerenciarTarefas();
+        });
+      });
+    }
+
+    document.getElementById('navUsuario').addEventListener('click', e => {
+      e.preventDefault();
+      showCadastroUsuario();
+    });
+
+    document.getElementById('navTarefa').addEventListener('click', e => {
+      e.preventDefault();
+      showCadastroTarefa();
+    });
+
+    document.getElementById('navGerenciar').addEventListener('click', e => {
+      e.preventDefault();
+      showGerenciarTarefas();
+    });
+
+    // Tela inicial
+    showCadastroUsuario();
+  </script>
+</body>
+</html>
